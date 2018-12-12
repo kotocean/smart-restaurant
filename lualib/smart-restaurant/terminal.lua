@@ -25,6 +25,7 @@ function terminal:watch()
 	ngx.log(ngx.INFO, "transfer_space:", transfer_space, ", watch_index:", self.watch_index)
 	plate_space = cjson.decode(transfer_space)
 	-- 返回观测到的当前位置的盘号
+	ngx.log(ngx.INFO, plate_space[self.watch_index], self.watch_index)
 	return plate_space[self.watch_index], self.watch_index
 end
 

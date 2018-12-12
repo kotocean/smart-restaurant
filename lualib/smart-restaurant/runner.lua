@@ -4,39 +4,54 @@ local runner = {}
 
 function runner:new(o)
 	o = o or {}
-	setmetatable(o, self)
+	setmetatable(o,self)
 	self.__index = self
 	return o
 end
 
+function read_share_transfer_space()
+	local share_transfer_space = ngx.shared.share_transfer_space:get("share_transfer_space")
+	return cjson.decode(share_transfer_space)
+end
+
+function write_share_transfer_space(share_transfer_space)
+	ngx.shared.share_transfer_space:set("share_transfer_space", cjson.encode(share_transfer_space))
+end
+
+function runner:set(index, value)
+	local share_transfer_space = read_share_transfer_space()
+	share_transfer_space[tonumber(index)] = value
+	write_share_transfer_space(share_transfer_space)
+end
+
+function runner:get(index)
+	return read_share_transfer_space()[tonumber(index)]
+end
+
 function transfer(premature)
-	share_transfer_space = ngx.shared.share_transfer_space
-	transfer_space = share_transfer_space:get("transfer_space")
-	space_list = cjson.decode(transfer_space)
-	temp_list = {}
-	for i=2, table.maxn(space_list) do
-		table.insert(temp_list, space_list[i])
+	local transfer_space = cjson.decode(ngx.shared.share_transfer_space:get("share_transfer_space"))
+	temp_space = {}
+	for i=2, #transfer_space do
+		table.insert(temp_space,transfer_space[i])
 	end
-	table.insert(temp_list, space_list[1])
-	share_transfer_space:set("transfer_space", cjson.encode(temp_list))
-	ngx.log(ngx.INFO, "转圈 ","====>>>>", cjson.encode(temp_list))
+	table.insert(temp_space, transfer_space[1])
+	ngx.shared.share_transfer_space:set("share_transfer_space", cjson.encode(temp_space))
+	ngx.log(ngx.INFO, "转圈 ","====>>>>", cjson.encode(temp_space))
 end
 
 function init_plate_space(total)
 	local arr = {}
 	for i = 1, total do
-	  table.insert(arr, 0)
+	  table.insert(arr, "")
 	end
 	return arr
 end
 
 function runner:run(total)
 	-- 初始化20个空的盘空间
-	plate_space = init_plate_space(total)
-	ngx.log(ngx.INFO, cjson.encode(plate_space))
-	ngx.shared.share_transfer_space:set("transfer_space", cjson.encode(plate_space))
+	local share_transfer_space = init_plate_space(total)
+	write_share_transfer_space(share_transfer_space)
 
 	hdl, err = ngx.timer.every(5, transfer)
 end
-
 return runner

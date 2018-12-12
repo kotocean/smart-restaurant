@@ -1,4 +1,5 @@
 local Ingredients = require("smart-restaurant/ingredients")
+local cjson = require("cjson")
 
 local server={}
 
@@ -25,14 +26,12 @@ end
 
 
 function server:recv(ingres)
-	ngx.log(ngx.INFO, "ingres:", table.maxn(ingres))
-	for index, ingre in pairs(ingres) do
-		self.ingredients:add(ingre)
-	end
-	ngx.log(ngx.INFO, table.maxn(self.ingredients.inventory))
+	ngx.log(ngx.INFO, "ingres:", #ingres)
+	self.ingredients:add_group(ingres)
+	ngx.log(ngx.INFO, cjson.encode(self.ingredients.inventory))
 	--派发出去
-	local n = table.maxn(self.backends)
-	ngx.log(ngx.INFO, "backends maxn:", n)
+	local n = #self.backends
+	ngx.log(ngx.INFO, "backends nums:", n)
 	math.randomseed(os.time())
 	if n>0 then
 		local target_index = math.random(1, n)
@@ -41,7 +40,7 @@ function server:recv(ingres)
 end
 
 function server:notify(target, index, ingres)
-	ngx.log(ngx.INFO, 	"target:",target, ",index:", index,",ingres:", table.maxn(ingres))
+	ngx.log(ngx.INFO, 	"target:",target, ",index:", index,",ingres:", #ingres)
 
 	if target=="backend" then
 		self.backends[index]:recv(ingres)

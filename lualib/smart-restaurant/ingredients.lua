@@ -13,6 +13,12 @@ function ingredients:add(ingre)
 	table.insert(self.inventory, ingre)
 end
 
+function ingredients:add_group(ingres)
+	for index, ingre in pairs(ingres) do
+		self:add(ingre)
+	end
+end
+
 function ingredients:get_first()
 	return self.inventory[1]
 end
