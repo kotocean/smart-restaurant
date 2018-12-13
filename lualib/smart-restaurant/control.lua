@@ -1,34 +1,37 @@
 local cjson = require("cjson")
 
 local control = {}
-control.watch_index = 0
 
-function control:new(o)
+function control:new(o, watch_index)
 	o = o or {}
 	setmetatable(o, self)
 	self.__index = self
+	self.watch_index = watch_index
 	return o
 end
 
-function control:set_watch_index(index)
-	self.watch_index = index
+function read_share_transfer_space()
+	local share_transfer_space = ngx.shared.share_transfer_space:get("share_transfer_space")
+	return cjson.decode(share_transfer_space)
+end
+
+function write_share_transfer_space(share_transfer_space)
+	ngx.shared.share_transfer_space:set("share_transfer_space", cjson.encode(share_transfer_space))
 end
 
 function control:to_transfer(plate_num)
-	transfer_space = ngx.shared.share_transfer_space:get("transfer_space")
-	plate_space = cjson.decode(transfer_space)
-	plate_space[self.watch_index] = plate_num
+	local transfer_space = read_share_transfer_space()
+	transfer_space[self.watch_index] = plate_num
 
-	ngx.shared.share_transfer_space:set("transfer_space", cjson.encode(plate_space))
+	write_share_transfer_space(transfer_space)
 end
 
 function control:from_transfer()
-	transfer_space = ngx.shared.share_transfer_space:get("transfer_space")
-	plate_space = cjson.decode(transfer_space)
-	plate_num = plate_space[self.watch_index]
-	plate_space[self.watch_index] = 0
+	local transfer_space = read_share_transfer_space()
+	local plate_num = transfer_space[self.watch_index]
+	transfer_space[self.watch_index] = ""
 
-	ngx.shared.share_transfer_space:set("transfer_space", cjson.encode(plate_space))
+	write_share_transfer_space(transfer_space)
 	return plate_num
 end
 
