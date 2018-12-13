@@ -30,13 +30,10 @@ end
 
 function transfer(premature)
 	local transfer_space = cjson.decode(ngx.shared.share_transfer_space:get("share_transfer_space"))
-	temp_space = {}
-	for i=2, #transfer_space do
-		table.insert(temp_space,transfer_space[i])
-	end
-	table.insert(temp_space, transfer_space[1])
-	ngx.shared.share_transfer_space:set("share_transfer_space", cjson.encode(temp_space))
-	ngx.log(ngx.INFO, "转圈 ","====>>>>", cjson.encode(temp_space))
+	local first = table.remove(transfer_space, 1)
+	table.insert(transfer_space, first)
+	ngx.shared.share_transfer_space:set("share_transfer_space", cjson.encode(transfer_space))
+	ngx.log(ngx.INFO, "转圈 ","====>>>>", cjson.encode(transfer_space))
 end
 
 function init_plate_space(total)

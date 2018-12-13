@@ -1,42 +1,43 @@
+local cjson = require("cjson")
 local ingredients = {}
 
-ingredients.inventory = {}
 
-function ingredients:new(o)
+function read_share_transfer_space(index)
+	local share_transfer_space = ngx.shared.share_transfer_space:get("inventory" .. index)
+	return cjson.decode(share_transfer_space)
+end
+
+function write_share_transfer_space(index, inventory)
+	ngx.shared.share_transfer_space:set("inventory" .. index, cjson.encode(inventory))
+end
+
+function ingredients:new(o, index)
 	o = o or {}
 	setmetatable(o, self)
 	self.__index = self
+	self.index = index
 	return o
 end
 
-function ingredients:add(ingre)
-	table.insert(self.inventory, ingre)
+function ingredients:set(ingres)
+	write_share_transfer_space(self.index, ingres)
 end
 
-function ingredients:add_group(ingres)
-	for index, ingre in pairs(ingres) do
-		self:add(ingre)
-	end
-end
-
-function ingredients:get_first()
-	return self.inventory[1]
+function ingredients:get()
+	return read_share_transfer_space(self.index)
 end
 
 function ingredients:remove(ingre)
-	for k,v in pairs(self.inventory) do
+	local inventory = read_share_transfer_space(self.index)
+	for k,v in pairs(inventory) do
 		if v==ingre then
-			table.remove(self.inventory, k)
+			table.remove(inventory, k)
 			break
 		end
 	end
+	write_share_transfer_space(self.index, inventory)
 end
 
-function ingredients:clear()
-	for k,v in pairs(self.inventory) do
-		table.remove(self.inventory, k)
-	end
-end
 
 return ingredients
 

@@ -1,0 +1,3 @@
+127.0.0.1 - - [13/Dec/2018:21:14:43 +0800] "GET /recv?ingres=%E5%B0%8F%E7%99%BD%E8%8F%9C&ingres=%E9%BB%84%E8%8A%B1%E8%8F%9C&ingres=%E9%B1%BC%E8%B1%86%E8%85%90&ingres=%E7%89%9B%E8%82%89&ingres=%E7%BE%8A%E8%82%89&id=1 HTTP/1.1" 200 5 "-" "lua-resty-http/0.12 (Lua) ngx_lua/10011"
+127.0.0.1 - - [13/Dec/2018:21:14:43 +0800] "GET / HTTP/1.1" 200 67 "-" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36"
+127.0.0.1 - - [13/Dec/2018:21:14:43 +0800] "GET /favicon.ico HTTP/1.1" 200 67 "http://localhost:8081/" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36"
