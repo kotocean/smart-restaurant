@@ -35,25 +35,25 @@ function backend:complete(ingre)
 	math.randomseed(os.time())
 	local plate_num = math.random(1, 1000)
 	ingredients:set({ingre=ingre, plate_num=tostring(plate_num)})
-	-- local httpc = http.new()
-	-- local res, err = httpc:request_uri("http://127.0.0.1:8081/notify",{
-	-- 	query = {
-	-- 		target = "fronted",
-	-- 		id = frontend_id,
-	-- 		ingres = {ingre}
-	-- 	}
-	-- })
-	-- if not res then
-	-- 	ngx.log(ngx.INFO, "failed to request:", err)
-	-- 	return
-	-- end
+	
 end
 
 function backend:watch()
-	ngx.timer.every(5, terminal_watch, self.terminal, self.control, self.id)
+	ngx.timer.every(5, terminal_watch, notify_server, self.terminal, self.control, self.id)
 end
 
-function terminal_watch(premature, terminal, control, id)
+function notify_server(query)
+	local httpc = http.new()
+	local res, err = httpc:request_uri("http://127.0.0.1:8083/notify",{
+		query = query
+	})
+	if not res then
+		ngx.log(ngx.INFO, "failed to request:", err)
+		return
+	end
+end
+
+function terminal_watch(premature, notify_hdl,  terminal, control, id)
 	
 	ngx.log(ngx.INFO, "backend_id:", id)
 	-- 实际中，是要定时查看的
@@ -71,6 +71,12 @@ function terminal_watch(premature, terminal, control, id)
 			control:to_transfer(ready_obj.plate_num)
 			ingredients:delete()
 			-- server:notify("frontend", 1, {ingre, plate_num_1})
+			notify_hdl({
+				target = "fronted",
+				id = 1,
+				ingre = ingre,
+				plate_num = plate_num
+			})
 		end
 	end
 end
