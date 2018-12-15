@@ -35,6 +35,7 @@ function server:recv(ingres)
 	ngx.log(ngx.INFO, "backends nums:", n)
 	math.randomseed(os.time())
 	if n>0 then
+		-- 随机选择一个备菜端 1~n
 		local index = math.random(1, n)
 		self:notify("backend", self.backends[index], ingres)
 	end
