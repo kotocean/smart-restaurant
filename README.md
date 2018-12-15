@@ -12,3 +12,4 @@ nginx -c conf/nginx.conf -s stop
 2. 模拟已经有菜品在旋转：http://localhost:8080/set?i=10&v=20306
 3. 模拟接收用户订单，同时分发到backend：http://localhost:8081/
 4. 模拟用户消费菜品：http://localhost:8082/complete?ingre=黄瓜
+5. 用户等待消费：http://localhost:8083/

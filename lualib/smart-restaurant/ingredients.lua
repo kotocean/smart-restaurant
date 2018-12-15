@@ -32,6 +32,19 @@ function ingredients:set(ingres)
 	write_share_inventory(self.index, ingres)
 end
 
+function ingredients:add_group(ingres)
+	local inventory = read_share_inventory(self.index)
+	if not inventory then
+		write_share_inventory(self.index, ingres)
+	else
+		for i, ingre in pairs(ingres) do
+			table.insert(inventory, ingre)
+		end
+		write_share_inventory(self.index, inventory)
+	end
+	ngx.log(ngx.INFO, "inventory:", cjson.encode(inventory))
+end
+
 function ingredients:delete()
 	delete_share_inventory(self.index)
 end

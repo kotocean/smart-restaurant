@@ -41,7 +41,7 @@ function server:recv(ingres)
 end
 
 function server:notify(target, id, ingres)
-	ngx.log(ngx.INFO, 	"target:",target, ",id:", id,",ingres:", #ingres)
+	ngx.log(ngx.INFO, 	"---------->>>>>>>>>> target:",target, ",id:", id,",ingres:", #ingres)
 
 	if target=="backend" then
 		ngx.log(ngx.INFO, "backend:", id, ",ingres:", cjson.encode(ingres))
@@ -61,13 +61,29 @@ function server:notify(target, id, ingres)
 
 	if target=="frontend" then
 		ngx.log(ngx.INFO, "frontend:", id, ",ingres:", cjson.encode(ingres))
+
+		local httpc = http.new()
+		local res, err = httpc:request_uri("http://127.0.0.1:8083/recv",{
+			query = {
+				id = id,
+				ingres = ingres
+			}
+		})
+		if not res then
+			ngx.log(ngx.INFO, "failed to request:", err)
+			return
+		end
 	end
 end
 
 function server:complete(id, ingre)
 	self.ingredients:remove(ingre)
 	-- 标记食材已成功被消费者取走
-	ngx.log(ngx.INFO, "frontend:", id, ",ingre:", ingre, " complete!")
+	if type(ingre)=="table" then
+		ngx.log(ngx.INFO, "frontend:", id, ",ingre:", cjson.encode(ingre), " complete!")
+	else
+		ngx.log(ngx.INFO, "frontend:", id, ",ingre:", ingre, " complete!")
+	end
 end
 
 return server

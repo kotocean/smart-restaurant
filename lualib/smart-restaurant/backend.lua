@@ -44,7 +44,7 @@ end
 
 function notify_server(query)
 	local httpc = http.new()
-	local res, err = httpc:request_uri("http://127.0.0.1:8083/notify",{
+	local res, err = httpc:request_uri("http://127.0.0.1:8081/notify",{
 		query = query
 	})
 	if not res then
@@ -72,10 +72,9 @@ function terminal_watch(premature, notify_hdl,  terminal, control, id)
 			ingredients:delete()
 			-- server:notify("frontend", 1, {ingre, plate_num_1})
 			notify_hdl({
-				target = "fronted",
+				target = "frontend",
 				id = 1,
-				ingre = ingre,
-				plate_num = plate_num
+				ingres = {ready_obj.ingre, ready_obj.plate_num}
 			})
 		end
 	end
