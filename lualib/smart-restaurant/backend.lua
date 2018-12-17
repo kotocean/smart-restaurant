@@ -20,7 +20,7 @@ end
 function backend:recv(ingres)
 	ngx.log(ngx.INFO, "ingres:", cjson.encode(ingres))
 	local ingredients = Ingredients:new(nil, "backend_" ..self.id)
-	ingredients:set(ingres)
+	ingredients:add_group(ingres)
 end
 
 function backend:complete(ingre)
@@ -28,8 +28,7 @@ function backend:complete(ingre)
 	local ingredients = Ingredients:new(nil, "backend_" ..self.id .."_complete")
 	math.randomseed(os.time())
 	local plate_num = math.random(1, 1000)
-	ingredients:set({ingre=ingre, plate_num=tostring(plate_num)})
-	
+	ingredients:add_group({{ingre=ingre, plate_num=tostring(plate_num)}})
 end
 
 function backend:watch()
@@ -58,14 +57,14 @@ function terminal_watch(premature, notify_hdl,  terminal_controls, id)
 		if plate_num=="" then
 			ngx.log(ngx.INFO, "backend_" ..id .."_complete")
 			local ingredients = Ingredients:new(nil, "backend_" ..id .."_complete")
-			local ready_obj = ingredients:get()
+
+			local ready_obj = ingredients:remove_first() --获取第一个值，并从列表中移除
 			-- 放上盘子
 			if not ready_obj then
 				ngx.log(ngx.INFO, "wait a minutes ...")
 			else
 				ngx.log(ngx.INFO, "actual plate_num:", ready_obj.plate_num, ",ingre:", ready_obj.ingre)
 				control:to_transfer(ready_obj.plate_num)
-				ingredients:delete()
 				-- server:notify("frontend", 1, {ingre, plate_num_1})
 				notify_hdl({
 					target = "frontend",

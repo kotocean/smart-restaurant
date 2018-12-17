@@ -32,6 +32,7 @@ function ingredients:set(ingres)
 	write_share_inventory(self.index, ingres)
 end
 
+
 function ingredients:add_group(ingres)
 	local inventory = read_share_inventory(self.index)
 	if not inventory then
@@ -63,6 +64,16 @@ function ingredients:remove(ingre)
 		end
 	end
 	write_share_inventory(self.index, inventory)
+end
+
+function ingredients:remove_first()
+	local inventory = read_share_inventory(self.index)
+	if #inventory<=0 then
+		return nil
+	end
+	local ingre = table.remove(inventory, 1)
+	write_share_inventory(self.index, inventory)
+	return ingre
 end
 
 
