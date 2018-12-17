@@ -6,7 +6,7 @@ function control:new(o, watch_index)
 	o = o or {}
 	setmetatable(o, self)
 	self.__index = self
-	self.watch_index = watch_index
+	o.watch_index = watch_index
 	return o
 end
 

@@ -23,8 +23,8 @@ function ingredients:new(o, index)
 	o = o or {}
 	setmetatable(o, self)
 	self.__index = self
-	self.index = index
-	ngx.log(ngx.INFO, self.index)
+	o.index = index
+	ngx.log(ngx.INFO, o.index)
 	return o
 end
 

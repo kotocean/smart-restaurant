@@ -9,7 +9,7 @@ function backend:new(o, id)
 	o = o or {}
 	setmetatable(o, self)
 	self.__index = self
-	self.id = id
+	o.id = id
 	return o
 end
 
