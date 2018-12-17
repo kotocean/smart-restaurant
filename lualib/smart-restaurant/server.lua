@@ -41,6 +41,10 @@ function server:recv(ingres)
 	end
 end
 
+function server:status()
+	return self.ingredients:get()
+end
+
 function server:notify(target, id, ingres)
 	ngx.log(ngx.INFO, 	"---------->>>>>>>>>> target:",target, ",id:", id,",ingres:", #ingres)
 

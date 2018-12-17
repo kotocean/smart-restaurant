@@ -28,6 +28,10 @@ function runner:get(index)
 	return read_share_transfer_space()[tonumber(index)]
 end
 
+function runner:status()
+	return read_share_transfer_space()
+end
+
 function transfer(premature)
 	local transfer_space = cjson.decode(ngx.shared.share_transfer_space:get("share_transfer_space"))
 	local first = table.remove(transfer_space, 1)

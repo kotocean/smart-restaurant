@@ -58,9 +58,17 @@ end
 function ingredients:remove(ingre)
 	local inventory = read_share_inventory(self.index)
 	for k,v in pairs(inventory) do
-		if v==ingre then
-			table.remove(inventory, k)
-			break
+		if type(v)=="table" and type(ingre)=="table" then
+			if v.plate_num==ingre.plate_num then
+				table.remove(inventory, k)
+				break
+			end 
+		end
+		if type(v)=="string" and type(ingre)=="string" then
+			if v==ingre then
+				table.remove(inventory, k)
+				break
+			end
 		end
 	end
 	write_share_inventory(self.index, inventory)

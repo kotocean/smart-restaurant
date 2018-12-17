@@ -42,6 +42,11 @@ function complete_server(query)
 	end
 end
 
+function frontend:status()
+	local ingredients = Ingredients:new(nil, "frontend_" ..self.id)
+	return ingredients:get()
+end
+
 function frontend:watch()
 	ngx.timer.every(5, terminal_watch, complete_server, self.terminal, self.control, self.id)
 end

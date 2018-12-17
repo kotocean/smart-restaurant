@@ -31,6 +31,12 @@ function backend:complete(ingre)
 	ingredients:add_group({{ingre=ingre, plate_num=tostring(plate_num)}})
 end
 
+function backend:status()
+	-- local recv_ingredients = Ingredients:new(nil, "backend_" ..self.id)
+	local complete_ingredients = Ingredients:new(nil, "backend_" ..self.id .."_complete")
+	return complete_ingredients:get()
+end
+
 function backend:watch()
 	ngx.timer.every(5, terminal_watch, notify_server, self.terminal_controls, self.id)
 end
